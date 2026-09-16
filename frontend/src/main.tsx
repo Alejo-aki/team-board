@@ -1,17 +1,12 @@
 ﻿import React from "react";
 import ReactDOM from "react-dom/client";
-
-function App() {
-  return (
-    <main style={{ padding: "40px", fontFamily: "Arial, sans-serif" }}>
-      <h1>Team Board</h1>
-      <p>Frontend base funcionando correctamente.</p>
-    </main>
-  );
-}
+import App from "./App";
+import { AuthProvider } from "./auth/AuthContext";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <App />
+    <AuthProvider>
+      <App />
+    </AuthProvider>
   </React.StrictMode>
 );
