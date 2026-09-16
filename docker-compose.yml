@@ -1,0 +1,46 @@
+﻿services:
+  postgres:
+    image: postgres:17-alpine
+    container_name: team-board-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: team_board
+      POSTGRES_USER: team_board
+      POSTGRES_PASSWORD: team_board_dev
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  backend:
+    image: node:22-alpine
+    container_name: team-board-backend
+    working_dir: /app
+    volumes:
+      - ./backend:/app
+    ports:
+      - "3000:3000"
+    depends_on:
+      - postgres
+    command: sh -c "sleep infinity"
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: team-board-frontend
+    working_dir: /app
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
+    environment:
+      VITE_API_URL: http://localhost:3000
+    command: npm run dev
+
+volumes:
+  postgres_data:
