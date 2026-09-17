@@ -74,4 +74,28 @@ export function post<T>(
   });
 }
 
+export function patch<T>(
+  path: string,
+  body: unknown,
+  token?: string | null
+): Promise<T> {
+  return request<T>(path, {
+    method: "PATCH",
+    body: JSON.stringify(body),
+    token,
+  });
+}
+
+export function del<T = void>(
+  path: string,
+  token?: string | null
+): Promise<T> {
+  return request<T>(path, {
+    method: "DELETE",
+    token,
+  });
+}
+
+
+
 export { TOKEN_KEY };

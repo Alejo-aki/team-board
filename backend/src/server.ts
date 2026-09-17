@@ -7,7 +7,7 @@ import {
 } from "./auth/authMiddleware.js";
 import usersRoutes from "./users/usersRoutes.js";
 import notesRoutes from "./notes/notesRoutes.js";
-
+import metricsRoutes from "./metrics/metricsRoutes.js";
 
 const app = express();
 const PORT = 3000;
@@ -154,7 +154,7 @@ app.get(
 
 app.use("/users", usersRoutes);
 app.use("/notes", notesRoutes);
-
+app.use("/metrics", metricsRoutes);
 
 app.listen(PORT, () => {
   console.log(`API running on http://localhost:${PORT}`);

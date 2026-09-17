@@ -1,4 +1,5 @@
 import { useAuth } from "./auth/AuthContext";
+import BoardPage from "./pages/BoardPage";
 import DashboardPage from "./pages/DashboardPage";
 import LoginPage from "./pages/LoginPage";
 
@@ -16,6 +17,10 @@ export default function App() {
     }
 
     return <LoginPage />;
+  }
+
+  if (path === "/board") {
+    return <BoardPage />;
   }
 
   if (path !== "/dashboard") {
