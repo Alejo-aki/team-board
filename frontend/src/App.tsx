@@ -2,6 +2,7 @@ import { useAuth } from "./auth/AuthContext";
 import BoardPage from "./pages/BoardPage";
 import DashboardPage from "./pages/DashboardPage";
 import LoginPage from "./pages/LoginPage";
+import UsersPage from "./pages/UsersPage";
 
 export default function App() {
   const { user, loading } = useAuth();
@@ -21,6 +22,15 @@ export default function App() {
 
   if (path === "/board") {
     return <BoardPage />;
+  }
+
+  if (path === "/users") {
+    if (user.role !== "admin") {
+      window.history.replaceState({}, "", "/dashboard");
+      return <DashboardPage />;
+    }
+
+    return <UsersPage />;
   }
 
   if (path !== "/dashboard") {

@@ -108,6 +108,8 @@ return (
       <div style={{ display: "flex", gap: "12px", marginTop: "20px" }}>
         <a href="/board">Ir al tablero</a>
 
+        {user?.role === "admin" && <a href="/users">Administrar usuarios</a>}
+
         <button type="button" onClick={handleLogout}>
           Cerrar sesión
         </button>
