@@ -29,10 +29,10 @@ export default function LoginPage() {
   }
 
   return (
-    <main>
-      <section>
+    <main className="login-page">
+      <section className="login-panel surface">
         <h1>Team Board</h1>
-        <p>Inicia sesión para continuar.</p>
+        <p>Tu espacio compartido para organizar el trabajo del equipo.</p>
 
         <form onSubmit={handleSubmit}>
           <label htmlFor="email">Email</label>
@@ -55,7 +55,7 @@ export default function LoginPage() {
             autoComplete="current-password"
           />
 
-          {error && <p role="alert">{error}</p>}
+          {error && <p className="feedback feedback-error" role="alert">{error}</p>}
 
           <button type="submit" disabled={submitting}>
             {submitting ? "Iniciando sesión..." : "Iniciar sesión"}

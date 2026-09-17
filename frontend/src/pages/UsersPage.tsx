@@ -1,6 +1,7 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { ApiError, get, patch, post } from "../api/http";
 import { useAuth } from "../auth/AuthContext";
+import AppHeader from "../components/AppHeader";
 import type { User, UserRole } from "../auth/types";
 
 type UsersResponse = {
@@ -199,25 +200,23 @@ async function handleStatusChange(target: User) {
   }
 
   return (
-    <main style={{ minHeight: "100vh", padding: "24px", background: "#f3f4f6" }}>
-      <header style={{ display: "flex", justifyContent: "space-between", gap: "16px", flexWrap: "wrap" }}>
-        <div>
-          <h1>Administración de usuarios</h1>
-          <p>{user?.name} · {user?.role}</p>
+    <main className="app-page">
+      <AppHeader />
+      <div className="app-content">
+        <div className="page-heading">
+          <div>
+            <h1>Administración de usuarios</h1>
+            <p>Gestiona el acceso y el estado de las cuentas del equipo.</p>
+          </div>
         </div>
-        <nav style={{ display: "flex", gap: "12px", alignItems: "center" }}>
-          <a href="/dashboard">Dashboard</a>
-          <a href="/board">Tablero</a>
-          <button type="button" onClick={handleLogout}>Cerrar sesión</button>
-        </nav>
-      </header>
 
-      {error && <p role="alert">{error}</p>}
-      {success && <p role="status">{success}</p>}
+      {error && <p className="feedback feedback-error" role="alert">{error}</p>}
+      {success && <p className="feedback feedback-success" role="status">{success}</p>}
 
-      <section>
+      <div className="users-layout">
+      <section className="users-section surface">
         <h2>Crear usuario</h2>
-        <form onSubmit={handleCreate} style={{ display: "grid", gap: "8px", maxWidth: "420px" }}>
+        <form className="create-user-form" onSubmit={handleCreate}>
           <label htmlFor="create-name">Nombre</label>
           <input
             id="create-name"
@@ -254,18 +253,18 @@ async function handleStatusChange(target: User) {
         </form>
       </section>
 
-      <section>
+      <section className="users-section surface">
         <h2>Usuarios</h2>
         {loading ? (
           <p>Cargando usuarios...</p>
         ) : users.length === 0 ? (
           <p>No hay usuarios.</p>
         ) : (
-          <div style={{ display: "grid", gap: "12px" }}>
+          <div className="user-list">
             {users.map((target) => (
-              <article key={target.id} style={{ padding: "16px", background: "white", border: "1px solid #d1d5db", borderRadius: "8px" }}>
+              <article className="user-card" key={target.id}>
                 {editingId === target.id && editForm ? (
-                  <form onSubmit={(event) => void handleEdit(event, target.id)} style={{ display: "grid", gap: "8px" }}>
+                  <form className="edit-user-form" onSubmit={(event) => void handleEdit(event, target.id)}>
                     <label htmlFor={`edit-name-${target.id}`}>Nombre</label>
                     <input
                       id={`edit-name-${target.id}`}
@@ -290,20 +289,20 @@ async function handleStatusChange(target: User) {
                       <option value="user">Usuario</option>
                       <option value="admin">Administrador</option>
                     </select>
-                    <div style={{ display: "flex", gap: "8px" }}>
+                    <div className="user-actions">
                       <button type="submit" disabled={saving}>Guardar cambios</button>
                       <button type="button" onClick={cancelEditing}>Cancelar</button>
                     </div>
                   </form>
                 ) : (
-                  <div style={{ display: "flex", justifyContent: "space-between", gap: "16px", flexWrap: "wrap" }}>
+                  <div className="user-card-content" style={{ display: "flex", justifyContent: "space-between", gap: "16px", flexWrap: "wrap" }}>
                     <div>
                       <strong>{target.name}</strong>
                       <p>{target.email}</p>
                       <p>Rol: {target.role}</p>
                       <p>Estado: {target.active ? "Activo" : "Inactivo"}</p>
                     </div>
-                    <div style={{ display: "flex", gap: "8px", alignItems: "start", flexWrap: "wrap" }}>
+                    <div className="user-actions">
                       <button type="button" onClick={() => startEditing(target)}>Editar</button>
                       <button type="button" onClick={() => void handleStatusChange(target)} disabled={saving}>
                         {target.active ? "Desactivar" : "Activar"}
@@ -316,6 +315,8 @@ async function handleStatusChange(target: User) {
           </div>
         )}
       </section>
+      </div>
+      </div>
     </main>
   );
 }

@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { del, get, patch, post } from "../api/http";
 import { useAuth } from "../auth/AuthContext";
+import AppHeader from "../components/AppHeader";
 
 type NoteStatus = "pending" | "in_progress" | "done";
 
@@ -292,46 +293,20 @@ export default function BoardPage() {
   }
 
   return (
-    <main
-      style={{
-        minHeight: "100vh",
-        padding: "24px",
-        boxSizing: "border-box",
-        background: "#f3f4f6",
-      }}
-    >
-      <header
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          gap: "16px",
-          marginBottom: "20px",
-          flexWrap: "wrap",
-        }}
-      >
-        <div>
-          <h1 style={{ margin: 0 }}>Tablero compartido</h1>
-          <p style={{ margin: "6px 0 0" }}>
-            {user?.name} · {user?.role}
-          </p>
+    <main className="app-page board-page">
+      <AppHeader />
+      <div className="app-content">
+        <div className="board-toolbar">
+          <div>
+            <h1>Tablero compartido</h1>
+            <p>Organiza las notas del equipo en un espacio común.</p>
+          </div>
+          <button type="button" onClick={handleCreate}>Crear nota</button>
         </div>
-
-        <nav style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
-          <a href="/dashboard">Dashboard</a>
-
-          <button type="button" onClick={handleCreate}>
-            Crear nota
-          </button>
-
-          <button type="button" onClick={handleLogout}>
-            Cerrar sesión
-          </button>
-        </nav>
-      </header>
 
       {error && (
         <p
+          className="feedback feedback-error"
           style={{
             padding: "10px 12px",
             background: "#fee2e2",
@@ -348,6 +323,7 @@ export default function BoardPage() {
       ) : (
         <div
           ref={boardRef}
+          className="board-surface"
           style={{
             position: "relative",
             height: "calc(100vh - 150px)",
@@ -363,6 +339,7 @@ export default function BoardPage() {
           {notes.map((note) => (
             <article
               key={note.id}
+              className="note-card"
               onPointerDown={(event) => handlePointerDown(event, note)}
               onPointerMove={handlePointerMove}
               onPointerUp={handlePointerUp}
@@ -473,6 +450,7 @@ export default function BoardPage() {
           )}
         </div>
       )}
+      </div>
     </main>
   );
 }
