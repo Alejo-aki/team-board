@@ -3,24 +3,65 @@ Transform: AWS::Serverless-2016-10-31
 Description: Team Board metrics Lambda
 
 Parameters:
+  VpcId:
+    Type: AWS::EC2::VPC::Id
+    Default: vpc-0a49b4b7d6dd84466
+
+  LambdaSubnetIds:
+    Type: List<AWS::EC2::Subnet::Id>
+    Default: subnet-09e9a8d60b603b670,subnet-02cd78041cb2dbe08
+
+  RdsSecurityGroupId:
+    Type: AWS::EC2::SecurityGroup::Id
+    Default: sg-01b4aeca51cf35784
+
   PGHost:
     Type: String
     Default: postgres
+
   PGPort:
     Type: String
     Default: '5432'
+
   PGDatabase:
     Type: String
     Default: team_board
+
   PGUser:
     Type: String
     Default: team_board
+
   PGPassword:
     Type: String
     NoEcho: true
     Default: team_board_dev
 
+  PGSSL:
+    Type: String
+    Default: ''
+
 Resources:
+  MetricsLambdaSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Team Board metrics Lambda security group
+      VpcId: !Ref VpcId
+      Tags:
+        - Key: Name
+          Value: team-board-metrics-lambda-sg
+        - Key: Project
+          Value: team-board
+
+  MetricsLambdaToRdsIngress:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      GroupId: !Ref RdsSecurityGroupId
+      IpProtocol: tcp
+      FromPort: 5432
+      ToPort: 5432
+      SourceSecurityGroupId: !GetAtt MetricsLambdaSecurityGroup.GroupId
+      Description: Allow metrics Lambda to access PostgreSQL
+
   MetricsFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -29,6 +70,15 @@ Resources:
       Runtime: nodejs22.x
       Timeout: 10
       MemorySize: 256
+
+      Policies:
+        - AWSLambdaVPCAccessExecutionRole
+
+      VpcConfig:
+        SecurityGroupIds:
+          - !GetAtt MetricsLambdaSecurityGroup.GroupId
+        SubnetIds: !Ref LambdaSubnetIds
+
       Environment:
         Variables:
           PGHOST: !Ref PGHost
@@ -36,11 +86,27 @@ Resources:
           PGDATABASE: !Ref PGDatabase
           PGUSER: !Ref PGUser
           PGPASSWORD: !Ref PGPassword
+          PGSSL: !Ref PGSSL
+
       Events:
         Metrics:
           Type: HttpApi
           Properties:
             Path: /metrics
             Method: GET
+
     Metadata:
       BuildMethod: makefile
+
+Outputs:
+  MetricsApiUrl:
+    Description: URL of the metrics Lambda HTTP API
+    Value: !Sub 'https://${ServerlessHttpApi}.execute-api.${AWS::Region}.${AWS::URLSuffix}/metrics'
+
+  MetricsLambdaFunctionName:
+    Description: Metrics Lambda function name
+    Value: !Ref MetricsFunction
+
+  MetricsLambdaSecurityGroupId:
+    Description: Security group used by the metrics Lambda
+    Value: !GetAtt MetricsLambdaSecurityGroup.GroupId
