@@ -1,0 +1,46 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Team Board metrics Lambda
+
+Parameters:
+  PGHost:
+    Type: String
+    Default: postgres
+  PGPort:
+    Type: String
+    Default: '5432'
+  PGDatabase:
+    Type: String
+    Default: team_board
+  PGUser:
+    Type: String
+    Default: team_board
+  PGPassword:
+    Type: String
+    NoEcho: true
+    Default: team_board_dev
+
+Resources:
+  MetricsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../../lambda/metrics/
+      Handler: handler.handler
+      Runtime: nodejs22.x
+      Timeout: 10
+      MemorySize: 256
+      Environment:
+        Variables:
+          PGHOST: !Ref PGHost
+          PGPORT: !Ref PGPort
+          PGDATABASE: !Ref PGDatabase
+          PGUSER: !Ref PGUser
+          PGPASSWORD: !Ref PGPassword
+      Events:
+        Metrics:
+          Type: HttpApi
+          Properties:
+            Path: /metrics
+            Method: GET
+    Metadata:
+      BuildMethod: makefile

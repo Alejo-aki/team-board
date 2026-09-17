@@ -1,0 +1,17 @@
+{
+  "name": "team-board-metrics-lambda",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "build": "sam build --template-file ../../infra/sam/template.yaml"
+  },
+  "dependencies": {
+    "pg": "^8.16.3"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.0",
+    "@types/pg": "^8.15.5",
+    "typescript": "^5.8.3"
+  }
+}
