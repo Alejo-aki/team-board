@@ -27,3 +27,8 @@ Thumbs.db
 !.vscode/settings.json
 
 # AWS SAM build artifacts.aws-sam/
+
+# AWS SAM generated artifacts
+.aws-sam
+.aws-sam/**
+**/.aws-sam/**
